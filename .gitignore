@@ -104,11 +104,6 @@ Thumbs.db
 *.test.ts
 
 # Docker
-*.pid
-.docker/
-.dockerignore
-docker-compose.override.yml
-docker-compose.*.yml
 
 # Kubernetes
 *.kubeconfig
