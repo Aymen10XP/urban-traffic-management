@@ -1,0 +1,132 @@
+  version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: traffic_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: traffic_management
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - traffic-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: traffic_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - traffic-network
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@postgres:5432/traffic_management
+      JWT_SECRET: your-super-secret-jwt-key
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - traffic-network
+
+  vehicle-service:
+    build:
+      context: ./services/vehicle-service
+      dockerfile: Dockerfile
+    container_name: vehicle-service
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@postgres:5432/traffic_management
+      PORT: 3002
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+    networks:
+      - traffic-network
+
+  traffic-service:
+    build:
+      context: ./services/traffic-service
+      dockerfile: Dockerfile
+    container_name: traffic-service
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@postgres:5432/traffic_management
+      PORT: 3003
+    ports:
+      - "3003:3003"
+    depends_on:
+      - postgres
+    networks:
+      - traffic-network
+
+  incident-service:
+    build:
+      context: ./services/incident-service
+      dockerfile: Dockerfile
+    container_name: incident-service
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@postgres:5432/traffic_management
+      PORT: 3004
+    ports:
+      - "3004:3004"
+    depends_on:
+      - postgres
+    networks:
+      - traffic-network
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@postgres:5432/traffic_management
+      PORT: 3005
+    ports:
+      - "3005:3005"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - traffic-network
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    environment:
+      PORT: 4000
+      AUTH_SERVICE_URL: http://auth-service:3001/graphql
+      VEHICLE_SERVICE_URL: http://vehicle-service:3002/graphql
+      TRAFFIC_SERVICE_URL: http://traffic-service:3003/graphql
+      INCIDENT_SERVICE_URL: http://incident-service:3004/graphql
+      NOTIFICATION_SERVICE_URL: http://notification-service:3005/graphql
+    ports:
+      - "4000:4000"
+    depends_on:
+      - auth-service
+      - vehicle-service
+      - traffic-service
+      - incident-service
+      - notification-service
+    networks:
+      - traffic-network
+
+volumes:
+  postgres_data:
+
+networks:
+  traffic-network:
+    driver: bridge
