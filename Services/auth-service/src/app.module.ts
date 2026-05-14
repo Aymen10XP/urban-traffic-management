@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Request } from 'express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { User } from './entities/user.entity';
@@ -31,7 +32,7 @@ import { JwtStrategy } from './jwt.strategy';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      context: ({ req }) => ({ req }),
+      context: ({ req }: { req: Request }) => ({ req }),
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
