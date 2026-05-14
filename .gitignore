@@ -1,72 +1,427 @@
-# dependencies
+# Dependencies
 /node_modules
 /.pnp
 .pnp.js
-.yarn/install-state.gz
+.pnp.loader.mjs
+.yarn/
+.yarnrc
+.yarnrc.yml
+.yarn-integrity
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
+# Build outputs
 /dist
+/build
+/out
+/lib
+*.tsbuildinfo
+.next/
 
-# misc
-.DS_Store
-*.pem
+# Production builds
+dist/
+build/
+out/
 
-# debug
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+.env.staging
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sql
+data/
+pgdata/
+*.sqlite-journal
+
+# Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 .pnpm-debug.log*
 
-# local env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# vercel
-.vercel
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+.nyc_output/
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# IDE
+# IDE and Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.~*
+.DS_Store
+.directory
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Desktop.ini
+$RECYCLE.BIN/
+Thumbs.db
+*.code-workspace
 
-# logs
-logs/
-*.log
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.tmp
 
-# database
-*.sqlite
-*.db
+# Testing
+/jest.config.js
+/__tests__/
+/__mocks__/
+/test/
+/coverage/
+.quokka/
+*.spec.js
+*.test.js
+*.spec.ts
+*.test.ts
 
 # Docker
 *.pid
 .docker/
+.dockerignore
+docker-compose.override.yml
+docker-compose.*.yml
 
-# uploads
+# Kubernetes
+*.kubeconfig
+*.kubeconfig.*
+kubeconfig
+helm/charts/*/values.local.yaml
+*.secret.yaml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+*.terraform.lock.hcl
+
+# Security & Secrets
+*.key
+*.pem
+*.crt
+*.csr
+*.p12
+*.pfx
+*.p8
+*.secret
+secrets/
+.ssh/
+id_rsa*
+*.jwk
+*.jwt
+jwtRS*.key
+jwtRS*.key.pub
+
+# Uploads & Temporary files
 uploads/
 temp/
+tmp/
+temp_*
+*.tmp
+*.temp
+.cache/
+.tmp/
+.temp/
 
-# secrets
-*secrets*
-*key*
-*private*
+# Package manager locks (optional - comment out if you want to track them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
 
-# OS
-Thumbs.db
+# NestJS specific
+/.eslintrc.js
+/.prettierrc
+/tsconfig.build.tsbuildinfo
+/ormconfig.json
+/ormconfig.js
+
+# GraphQL schema (auto-generated)
+/schema.gql
+/schema.graphql
+*graphql.ts
+*graphql.js
+__generated__/
+
+# Prisma
+/prisma/*.db
+/prisma/*.db-journal
+prisma/*.db
+prisma/*.db-journal
+prisma/migrations/*.sql
+
+# Redis
+dump.rdb
+appendonly.aof
+*.rdb
+*.aof
+
+# RabbitMQ
+*.rabbitmq_data
+
+# Elasticsearch
+elasticsearch/
+*.log.gz
+
+# MongoDB
+*.mongodb
+
+# Nginx
+/nginx/logs/
+/nginx/ssl/*.crt
+/nginx/ssl/*.key
+
+# PM2
+.pm2/
+pm2-*.log
+pm2.pid
+
+# Firebase
+.firebase/
+*.firebaserc
+firebase-debug.log
+.google/
+
+# AWS
+.aws/
+aws-credentials.json
+*credentials.json
+*private-key.pem
+*.pem
+
+# Azure
+.azure/
+azure_*.json
+config.azure.json
+
+# GCP
+.gcloud/
+*.gcp.json
+service-account-key.json
+
+# Cloud
+*.cloud.json
+cloud-credentials.json
+
+# CI/CD
+.github/workflows/*.local.yml
+.gitlab-ci.local.yml
+circleci.local.yml
+.ci/
+.jenkins/
+*.jenkinsfile.local
+.drone.yml.local
+
+# Documentation
+docs/_build/
+docs/api/
+docs/_autosummary/
+site/
+_docs/
+
+# Reports
+reports/
+*.html
+*.xml
+*.json.report
+
+# Development
+*.swp
+*.swo
+*~
+.~*
 .DS_Store
+.history/
+.sentry-native/
+.vs/
+
+# Local configuration
+*.local.json
+*.local.js
+*.local.ts
+*.local.yaml
+*.local.yml
+*.local.toml
+*.local.ini
+*.local.config
+*.config.local
+
+# Service specific
+services/*/dist/
+services/*/node_modules/
+services/*/.env
+services/*/schema.gql
+services/*/tsconfig.tsbuildinfo
+api-gateway/dist/
+api-gateway/node_modules/
+api-gateway/.env
+api-gateway/schema.gql
+
+# RabbitMQ data
+# Redis data
+# PostgreSQL data
+*.pid
+*.socket
+
+# Temporary Docker files
+.docker-tmp/
+Dockerfile.tmp
+
+# Helm charts
+*.tgz
+charts/*.tgz
+
+# Hugo
+resources/_gen/
+.hugo_build.lock
+
+# Gatsby
+.cache/
+public/
+
+# Next.js
+.next/
+out/
+build/
+
+# Nuxt.js
+.nuxt/
+dist/
+.swc/
+
+# Vite
+.vite/
+vite.config.js.timestamp-*
+
+# Expo
+.expo/
+expo-build-status.json
+web-build/
+
+# React Native
+.idea/
+*.hprof
+*.jks
+*.keystore
+*.pem
+*.cert
+*.mobileconfig
+*.plist
+
+# Flutter
+.pub-cache/
+.pub/
+build/
+*.lock
+flutter_*.png
+
+# Android
+*.iml
+*.class
+*.dex
+*.apk
+*.aab
+gen/
+bin/
+.idea/
+.gradle/
+local.properties
+
+# iOS
+*.xcworkspace
+*.xcuserstate
+project.xcworkspace/
+xcuserdata/
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+Pods/
+
+# Python (if mixed with Python services)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+.env/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Go (if mixed with Go services)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.work
+vendor/
+go.sum
+
+# Rust (if mixed with Rust services)
+/target/
+**/*.rs.bk
+*.pdb
+*.dSYM
+Cargo.lock
+
+# Java (if mixed with Java services)
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+.mvn/
+mvnw
+mvnw.cmd
+
+# Ruby (if mixed with Ruby services)
+*.gem
+*.rbc
+/.bundle
+/vendor/bundle
+/lib/bundler/man/
+Gemfile.lock
+.rspec
+capybara-*.html
+*.lock
