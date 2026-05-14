@@ -1,11 +1,18 @@
 import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
+import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { User, UserRole } from './entities/user.entity';
 import { RegisterInput, LoginInput, AuthPayload } from './dto/auth.input';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 import { Roles } from './roles.decorator';
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    userId: string;
+  };
+}
 
 @Resolver(() => User)
 export class AuthResolver {
@@ -23,9 +30,18 @@ export class AuthResolver {
 
   @Query(() => User)
   @UseGuards(JwtAuthGuard)
-  async me(@Context() context): Promise<User> {
-    const userId = context.req.user.userId;
-    return this.authService.getUserById(userId);
+  async me(@Context() context: { req: AuthenticatedRequest }): Promise<User> {
+    const userId = context.req.user?.userId;
+    if (!userId) {
+      throw new UnauthorizedException('User not found in request context');
+    }
+
+    const user = await this.authService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException('Authenticated user not found');
+    }
+
+    return user;
   }
 
   @Query(() => [User])

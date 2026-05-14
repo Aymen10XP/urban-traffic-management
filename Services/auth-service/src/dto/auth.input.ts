@@ -6,14 +6,14 @@ import { User, UserRole } from '../entities/user.entity';
 export class RegisterInput {
   @Field()
   @IsEmail()
-  email: string;
+  email: string | undefined;
 
   @Field()
-  username: string;
+  username: string | undefined;
 
   @Field()
-  @MinLength(6)
-  password: string;
+    @MinLength(6)
+    password!: string;
 
   @Field(() => String, { nullable: true })
   @IsOptional()
@@ -24,18 +24,18 @@ export class RegisterInput {
 @InputType()
 export class LoginInput {
   @Field()
-  @IsEmail()
-  email: string;
+    @IsEmail()
+    email!: string;
 
   @Field()
-  password: string;
+    password!: string;
 }
 
 @ObjectType()
 export class AuthPayload {
   @Field(() => User)
-  user: User;
+    user!: User;
 
   @Field()
-  token: string;
+    token!: string;
 }

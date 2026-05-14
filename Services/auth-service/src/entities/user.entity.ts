@@ -11,18 +11,18 @@ export enum UserRole {
 export class User {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Field()
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Field()
   @Column()
-  username: string;
+  username!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @Field(() => String)
   @Column({
@@ -30,13 +30,13 @@ export class User {
     enum: UserRole,
     default: UserRole.OPERATOR,
   })
-  role: UserRole;
+  role!: UserRole;
 
   @Field()
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @Field()
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }
