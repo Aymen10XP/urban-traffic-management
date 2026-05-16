@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { CreateNotificationInput } from './dto/create-notification.input';
-import { UpdateNotificationInput } from './dto/update-notification.input';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Notification, NotificationType } from './entities/notification.entity';
+import { SendNotificationInput } from './dto/send-notification.input';
 
 @Injectable()
 export class NotificationService {
-  create(createNotificationInput: CreateNotificationInput) {
-    return 'This action adds a new notification';
+  private notifications: Notification[] = [];
+  private idCounter = 1;
+
+  send(input: SendNotificationInput): Notification {
+    const notification: Notification = {
+      id: this.idCounter++,
+      ...input,
+      isRead: false,
+      createdAt: new Date(),
+    };
+    this.notifications.push(notification);
+    return notification;
   }
 
-  findAll() {
-    return `This action returns all notification`;
+  findAll(): Notification[] {
+    return this.notifications;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
+  markAsRead(id: number): Notification {
+    const notification = this.notifications.find((n) => n.id === id);
+    if (!notification) {
+      throw new NotFoundException(`Notification with ID ${id} not found`);
+    }
+    notification.isRead = true;
+    return notification;
   }
 
-  update(id: number, updateNotificationInput: UpdateNotificationInput) {
-    return `This action updates a #${id} notification`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} notification`;
+  remove(id: number): boolean {
+    const initialLength = this.notifications.length;
+    this.notifications = this.notifications.filter((n) => n.id !== id);
+    return this.notifications.length < initialLength;
   }
 }
