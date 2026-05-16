@@ -1,0 +1,44 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Notification {
+  id: Int!
+  message: String!
+  type: NotificationType!
+  isRead: Boolean!
+  createdAt: DateTime!
+}
+
+"""Type de notification"""
+enum NotificationType {
+  INFO
+  ALERTE
+  URGENCE
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  """Consulter toutes les notifications"""
+  notifications: [Notification!]!
+}
+
+type Mutation {
+  """Envoyer une nouvelle notification"""
+  sendNotification(input: SendNotificationInput!): Notification!
+
+  """Marquer une notification comme lue"""
+  markAsRead(id: Int!): Notification!
+
+  """Supprimer une notification"""
+  removeNotification(id: Int!): Boolean!
+}
+
+input SendNotificationInput {
+  message: String!
+  type: NotificationType!
+}

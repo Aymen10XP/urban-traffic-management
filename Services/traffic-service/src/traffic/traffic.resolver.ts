@@ -1,35 +1,56 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { TrafficService } from './traffic.service';
-import { Traffic } from './entities/traffic.entity';
-import { CreateTrafficInput } from './dto/create-traffic.input';
-import { UpdateTrafficInput } from './dto/update-traffic.input';
+import { TrafficZone } from './entities/traffic-zone.entity';
+import { CreateTrafficZoneInput } from './dto/create-traffic-zone.input';
+import { UpdateTrafficZoneInput } from './dto/update-traffic-zone.input';
 
-@Resolver(() => Traffic)
+@Resolver(() => TrafficZone)
 export class TrafficResolver {
   constructor(private readonly trafficService: TrafficService) {}
 
-  @Mutation(() => Traffic)
-  createTraffic(@Args('createTrafficInput') createTrafficInput: CreateTrafficInput) {
-    return this.trafficService.create(createTrafficInput);
+  @Mutation(() => TrafficZone, {
+    description: 'Créer une nouvelle zone de circulation',
+  })
+  createTrafficZone(
+    @Args('input') input: CreateTrafficZoneInput,
+  ): TrafficZone {
+    return this.trafficService.create(input);
   }
 
-  @Query(() => [Traffic], { name: 'traffic' })
-  findAll() {
+  @Query(() => [TrafficZone], {
+    name: 'trafficZones',
+    description: 'Afficher toutes les zones de trafic',
+  })
+  findAll(): TrafficZone[] {
     return this.trafficService.findAll();
   }
 
-  @Query(() => Traffic, { name: 'traffic' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  @Query(() => TrafficZone, {
+    name: 'trafficZone',
+    description: 'Afficher une zone de trafic par ID',
+  })
+  findOne(
+    @Args('id', { type: () => Int }) id: number,
+  ): TrafficZone {
     return this.trafficService.findOne(id);
   }
 
-  @Mutation(() => Traffic)
-  updateTraffic(@Args('updateTrafficInput') updateTrafficInput: UpdateTrafficInput) {
-    return this.trafficService.update(updateTrafficInput.id, updateTrafficInput);
+  @Mutation(() => TrafficZone, {
+    description: 'Modifier une zone de trafic existante',
+  })
+  updateTrafficZone(
+    @Args('id', { type: () => Int }) id: number,
+    @Args('input') input: UpdateTrafficZoneInput,
+  ): TrafficZone {
+    return this.trafficService.update(id, input);
   }
 
-  @Mutation(() => Traffic)
-  removeTraffic(@Args('id', { type: () => Int }) id: number) {
+  @Mutation(() => TrafficZone, {
+    description: 'Supprimer une zone de trafic',
+  })
+  removeTrafficZone(
+    @Args('id', { type: () => Int }) id: number,
+  ): TrafficZone {
     return this.trafficService.remove(id);
   }
 }
