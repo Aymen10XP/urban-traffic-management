@@ -6,7 +6,7 @@ import { UpdateTrafficZoneInput } from './dto/update-traffic-zone.input';
 
 @Resolver(() => TrafficZone)
 export class TrafficResolver {
-  constructor(private readonly trafficService: TrafficService) {}
+  constructor(private readonly trafficService: TrafficService) { }
 
   @Mutation(() => TrafficZone, {
     description: 'Créer une nouvelle zone de circulation',
