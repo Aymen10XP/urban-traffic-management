@@ -3,7 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { join } from 'path';
-import { IncidentModule } from './incident/incident.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { IncidentModule } from './incident/incident.module';
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
-    IncidentModule,
+    VehiclesModule,
   ],
 })
 export class AppModule { }
