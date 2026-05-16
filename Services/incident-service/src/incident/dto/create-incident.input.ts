@@ -1,7 +1,17 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
+import { IncidentType } from '../entities/incident.entity';
 
 @InputType()
 export class CreateIncidentInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @Field()
+  title: string;
+
+  @Field()
+  description: string;
+
+  @Field()
+  location: string;
+
+  @Field(() => IncidentType)
+  type: IncidentType;
 }

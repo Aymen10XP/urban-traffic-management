@@ -1,8 +1,12 @@
+import { InputType, Field, PartialType, ID } from '@nestjs/graphql';
 import { CreateIncidentInput } from './create-incident.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { IncidentStatus } from '../entities/incident.entity';
 
 @InputType()
 export class UpdateIncidentInput extends PartialType(CreateIncidentInput) {
-  @Field(() => Int)
-  id: number;
+  @Field(() => ID)
+  id: string;
+
+  @Field(() => IncidentStatus, { nullable: true })
+  status?: IncidentStatus;
 }

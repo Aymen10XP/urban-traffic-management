@@ -1,0 +1,71 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Incident {
+  id: Int!
+  title: String!
+  description: String!
+  location: String!
+  type: IncidentType!
+  status: IncidentStatus!
+  createdAt: DateTime!
+}
+
+"""Nature de l’incident de trafic"""
+enum IncidentType {
+  ACCIDENT
+  TRAVAUX
+  ROUTE_FERMEE
+  EMBOUTEILLAGE
+}
+
+"""Statut courant de l’incident"""
+enum IncidentStatus {
+  SIGNALE
+  EN_COURS
+  RESOLU
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  """Afficher tous les incidents"""
+  incidents: [Incident!]!
+
+  """Afficher un incident par ID"""
+  incident(id: Int!): Incident!
+}
+
+type Mutation {
+  """Déclarer un nouvel incident de trafic"""
+  createIncident(input: CreateIncidentInput!): Incident!
+
+  """Modifier un incident existant"""
+  updateIncident(id: Int!, input: UpdateIncidentInput!): Incident!
+
+  """Modifier le statut d’un incident"""
+  updateIncidentStatus(id: Int!, status: IncidentStatus!): Incident!
+
+  """Supprimer un incident"""
+  removeIncident(id: Int!): Incident!
+}
+
+input CreateIncidentInput {
+  title: String!
+  description: String!
+  location: String!
+  type: IncidentType!
+}
+
+input UpdateIncidentInput {
+  title: String
+  description: String
+  location: String
+  type: IncidentType
+  id: ID!
+  status: IncidentStatus
+}
