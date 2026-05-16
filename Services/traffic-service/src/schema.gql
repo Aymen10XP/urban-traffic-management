@@ -1,0 +1,59 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type TrafficZone {
+  id: Int!
+  name: String!
+
+  """Densité du trafic en pourcentage (0-100)"""
+  density: Int!
+  congestionLevel: CongestionLevel!
+  location: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Niveau de congestion de la zone de trafic"""
+enum CongestionLevel {
+  FAIBLE
+  MOYEN
+  ELEVE
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  """Afficher toutes les zones de trafic"""
+  trafficZones: [TrafficZone!]!
+
+  """Afficher une zone de trafic par ID"""
+  trafficZone(id: Int!): TrafficZone!
+}
+
+type Mutation {
+  """Créer une nouvelle zone de circulation"""
+  createTrafficZone(input: CreateTrafficZoneInput!): TrafficZone!
+
+  """Modifier une zone de trafic existante"""
+  updateTrafficZone(id: Int!, input: UpdateTrafficZoneInput!): TrafficZone!
+
+  """Supprimer une zone de trafic"""
+  removeTrafficZone(id: Int!): TrafficZone!
+}
+
+input CreateTrafficZoneInput {
+  name: String!
+  density: Int!
+  location: String!
+}
+
+input UpdateTrafficZoneInput {
+  name: String
+  density: Int
+  location: String
+  id: Int!
+}
