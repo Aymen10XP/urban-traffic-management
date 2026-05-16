@@ -6,7 +6,7 @@ import { UpdateIncidentInput } from './dto/update-incident.input';
 
 @Resolver(() => Incident)
 export class IncidentResolver {
-  constructor(private readonly incidentService: IncidentService) {}
+  constructor(private readonly incidentService: IncidentService) { }
 
   @Mutation(() => Incident, {
     description: 'Déclarer un nouvel incident de trafic',
