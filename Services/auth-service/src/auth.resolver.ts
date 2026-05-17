@@ -2,7 +2,7 @@ import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { User, UserRole } from './entities/user.entity';
-import { RegisterInput, LoginInput, AuthPayload } from './dto/auth.input';
+import { RegisterInput, LoginInput, AuthPayload, UpdateUserInput } from './dto/auth.input';
 import { UseGuards, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
@@ -49,5 +49,19 @@ export class AuthResolver {
   @Roles(UserRole.ADMIN)
   async users(): Promise<User[]> {
     return this.authService.getAllUsers();
+  }
+
+  @Mutation(() => User)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async updateUser(@Args('input') input: UpdateUserInput): Promise<User> {
+    return this.authService.updateUser(input);
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async removeUser(@Args('id') id: string): Promise<boolean> {
+    return this.authService.removeUser(id);
   }
 }

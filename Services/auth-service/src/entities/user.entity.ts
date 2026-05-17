@@ -1,10 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export enum UserRole {
   ADMIN = 'ADMIN',
   OPERATOR = 'OPERATOR',
 }
+
+registerEnumType(UserRole, {
+  name: 'UserRole',
+  description: 'Available roles for the platform users',
+});
 
 @ObjectType()
 @Entity('users')
@@ -24,7 +29,7 @@ export class User {
   @Column()
   password!: string;
 
-  @Field(() => String)
+  @Field(() => UserRole)
   @Column({
     type: 'enum',
     enum: UserRole,
