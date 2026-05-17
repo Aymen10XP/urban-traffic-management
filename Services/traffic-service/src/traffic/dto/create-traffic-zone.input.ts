@@ -1,13 +1,21 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { IsInt, IsNotEmpty, IsString, Max, Min } from 'class-validator';
 
 @InputType()
 export class CreateTrafficZoneInput {
   @Field()
-  name: string;
+  @IsString()
+  @IsNotEmpty()
+  name!: string;
 
   @Field(() => Int)
-  density: number;
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  density!: number;
 
   @Field()
-  location: string;
+  @IsString()
+  @IsNotEmpty()
+  location!: string;
 }

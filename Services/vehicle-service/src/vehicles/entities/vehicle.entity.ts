@@ -1,4 +1,6 @@
-import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { VehiclePosition } from './vehicle-position.entity';
 
 export enum VehicleStatus {
   ACTIVE = 'ACTIVE',
@@ -8,26 +10,41 @@ export enum VehicleStatus {
 
 registerEnumType(VehicleStatus, {
   name: 'VehicleStatus',
-  description: 'Statut du véhicule',
+  description: 'Current operating status of the vehicle',
 });
 
 @ObjectType()
+@Entity('vehicles')
 export class Vehicle {
   @Field(() => Int)
-  id: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-  @Field({ nullable: true })
-  licensePlate?: string;
+  @Field()
+  @Column({ unique: true })
+  licensePlate!: string;
 
-  @Field({ nullable: true })
-  make?: string;
+  @Field()
+  @Column()
+  make!: string;
 
-  @Field({ nullable: true })
-  model?: string;
+  @Field()
+  @Column()
+  model!: string;
 
-  @Field(() => Int, { nullable: true })
-  year?: number;
+  @Field(() => Int)
+  @Column()
+  year!: number;
 
-  @Field(() => VehicleStatus, { nullable: true })
-  status?: VehicleStatus;
+  @Field(() => VehicleStatus)
+  @Column({
+    type: 'enum',
+    enum: VehicleStatus,
+    default: VehicleStatus.ACTIVE,
+  })
+  status!: VehicleStatus;
+
+  @Field(() => [VehiclePosition])
+  @OneToMany(() => VehiclePosition, (position) => position.vehicle)
+  positionHistory!: VehiclePosition[];
 }

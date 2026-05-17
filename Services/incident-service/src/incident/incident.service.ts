@@ -1,51 +1,59 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Incident, IncidentStatus } from './entities/incident.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateIncidentInput } from './dto/create-incident.input';
 import { UpdateIncidentInput } from './dto/update-incident.input';
+import { Incident, IncidentStatus } from './entities/incident.entity';
 
 @Injectable()
 export class IncidentService {
-  private incidents: Incident[] = [];
-  private idCounter = 1;
+  constructor(
+    @InjectRepository(Incident)
+    private readonly incidentsRepository: Repository<Incident>,
+  ) {}
 
-  create(input: CreateIncidentInput): Incident {
-    const incident: Incident = {
-      id: this.idCounter++,
+  async create(input: CreateIncidentInput): Promise<Incident> {
+    const incident = this.incidentsRepository.create({
       ...input,
       status: IncidentStatus.SIGNALE,
-      createdAt: new Date(),
-    };
-    this.incidents.push(incident);
-    return incident;
+    });
+
+    return this.incidentsRepository.save(incident);
   }
 
-  findAll(): Incident[] {
-    return this.incidents;
+  async findAll(): Promise<Incident[]> {
+    return this.incidentsRepository.find({
+      order: { createdAt: 'DESC', id: 'DESC' },
+    });
   }
 
-  findOne(id: number): Incident {
-    const incident = this.incidents.find((item) => item.id === id);
+  async findOne(id: number): Promise<Incident> {
+    const incident = await this.incidentsRepository.findOne({
+      where: { id },
+    });
+
     if (!incident) {
       throw new NotFoundException(`Incident with ID ${id} not found`);
     }
+
     return incident;
   }
 
-  update(id: number, input: UpdateIncidentInput): Incident {
-    const incident = this.findOne(id);
+  async update(id: number, input: UpdateIncidentInput): Promise<Incident> {
+    const incident = await this.findOne(id);
     Object.assign(incident, input);
-    return incident;
+    return this.incidentsRepository.save(incident);
   }
 
-  updateStatus(id: number, status: IncidentStatus): Incident {
-    const incident = this.findOne(id);
+  async updateStatus(id: number, status: IncidentStatus): Promise<Incident> {
+    const incident = await this.findOne(id);
     incident.status = status;
-    return incident;
+    return this.incidentsRepository.save(incident);
   }
 
-  remove(id: number): Incident {
-    const incident = this.findOne(id);
-    this.incidents = this.incidents.filter((item) => item.id !== incident.id);
+  async remove(id: number): Promise<Incident> {
+    const incident = await this.findOne(id);
+    await this.incidentsRepository.delete(id);
     return incident;
   }
 }

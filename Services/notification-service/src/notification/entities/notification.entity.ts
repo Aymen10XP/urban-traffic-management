@@ -1,4 +1,5 @@
-import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum NotificationType {
   INFO = 'INFO',
@@ -8,23 +9,32 @@ export enum NotificationType {
 
 registerEnumType(NotificationType, {
   name: 'NotificationType',
-  description: 'Type de notification',
+  description: 'Notification severity type',
 });
 
 @ObjectType()
+@Entity('notifications')
 export class Notification {
   @Field(() => Int)
-  id: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @Field()
-  message: string;
+  @Column('text')
+  message!: string;
 
   @Field(() => NotificationType)
-  type: NotificationType;
+  @Column({
+    type: 'enum',
+    enum: NotificationType,
+  })
+  type!: NotificationType;
 
   @Field(() => Boolean)
-  isRead: boolean;
+  @Column({ default: false })
+  isRead!: boolean;
 
   @Field()
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
 }

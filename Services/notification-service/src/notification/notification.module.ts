@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
-import { NotificationService } from './notification.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtAuthGuard } from '../jwt-auth.guard';
 import { NotificationResolver } from './notification.resolver';
+import { NotificationService } from './notification.service';
+import { Notification } from './entities/notification.entity';
 
 @Module({
-  providers: [NotificationResolver, NotificationService],
+  imports: [TypeOrmModule.forFeature([Notification])],
+  providers: [NotificationResolver, NotificationService, JwtAuthGuard],
 })
 export class NotificationModule {}

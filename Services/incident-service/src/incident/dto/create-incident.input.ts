@@ -1,17 +1,25 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { IncidentType } from '../entities/incident.entity';
 
 @InputType()
 export class CreateIncidentInput {
   @Field()
-  title: string;
+  @IsString()
+  @IsNotEmpty()
+  title!: string;
 
   @Field()
-  description: string;
+  @IsString()
+  @IsNotEmpty()
+  description!: string;
 
   @Field()
-  location: string;
+  @IsString()
+  @IsNotEmpty()
+  location!: string;
 
   @Field(() => IncidentType)
-  type: IncidentType;
+  @IsEnum(IncidentType)
+  type!: IncidentType;
 }

@@ -1,66 +1,63 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { IncidentService } from './incident.service';
-import { Incident, IncidentStatus } from './entities/incident.entity';
+import { UseGuards } from '@nestjs/common';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { JwtAuthGuard } from '../jwt-auth.guard';
 import { CreateIncidentInput } from './dto/create-incident.input';
 import { UpdateIncidentInput } from './dto/update-incident.input';
+import { Incident, IncidentStatus } from './entities/incident.entity';
+import { IncidentService } from './incident.service';
 
 @Resolver(() => Incident)
+@UseGuards(JwtAuthGuard)
 export class IncidentResolver {
-  constructor(private readonly incidentService: IncidentService) { }
+  constructor(private readonly incidentService: IncidentService) {}
 
   @Mutation(() => Incident, {
-    description: 'Déclarer un nouvel incident de trafic',
+    description: 'Declare a new traffic incident',
   })
-  createIncident(
-    @Args('input') input: CreateIncidentInput,
-  ): Incident {
+  createIncident(@Args('input') input: CreateIncidentInput) {
     return this.incidentService.create(input);
   }
 
   @Query(() => [Incident], {
     name: 'incidents',
-    description: 'Afficher tous les incidents',
+    description: 'List all incidents',
   })
-  findAll(): Incident[] {
+  findAll() {
     return this.incidentService.findAll();
   }
 
   @Query(() => Incident, {
     name: 'incident',
-    description: 'Afficher un incident par ID',
+    description: 'Get an incident by ID',
   })
-  findOne(
-    @Args('id', { type: () => Int }) id: number,
-  ): Incident {
+  findOne(@Args('id', { type: () => Int }) id: number) {
     return this.incidentService.findOne(id);
   }
 
   @Mutation(() => Incident, {
-    description: 'Modifier un incident existant',
+    description: 'Update an existing incident',
   })
   updateIncident(
     @Args('id', { type: () => Int }) id: number,
     @Args('input') input: UpdateIncidentInput,
-  ): Incident {
+  ) {
     return this.incidentService.update(id, input);
   }
 
   @Mutation(() => Incident, {
-    description: 'Modifier le statut d’un incident',
+    description: 'Update the status of an incident',
   })
   updateIncidentStatus(
     @Args('id', { type: () => Int }) id: number,
     @Args('status', { type: () => IncidentStatus }) status: IncidentStatus,
-  ): Incident {
+  ) {
     return this.incidentService.updateStatus(id, status);
   }
 
   @Mutation(() => Incident, {
-    description: 'Supprimer un incident',
+    description: 'Delete an incident',
   })
-  removeIncident(
-    @Args('id', { type: () => Int }) id: number,
-  ): Incident {
+  removeIncident(@Args('id', { type: () => Int }) id: number) {
     return this.incidentService.remove(id);
   }
 }

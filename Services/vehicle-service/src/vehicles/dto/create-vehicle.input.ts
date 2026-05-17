@@ -1,20 +1,32 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
 import { VehicleStatus } from '../entities/vehicle.entity';
 
 @InputType()
 export class CreateVehicleInput {
   @Field()
-  licensePlate: string;
+  @IsString()
+  @IsNotEmpty()
+  licensePlate!: string;
 
   @Field()
-  make: string;
+  @IsString()
+  @IsNotEmpty()
+  make!: string;
 
   @Field()
-  model: string;
+  @IsString()
+  @IsNotEmpty()
+  model!: string;
 
   @Field(() => Int)
-  year: number;
+  @IsInt()
+  @Min(1900)
+  @Max(2100)
+  year!: number;
 
   @Field(() => VehicleStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(VehicleStatus)
   status?: VehicleStatus;
 }
