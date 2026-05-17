@@ -1,58 +1,80 @@
 # Urban Traffic Management System
 
-## Architecture Microservices avec GraphQL
+## Overview
 
-### Prérequis
+This project implements a distributed urban traffic management platform using NestJS microservices, GraphQL subgraphs, and an Apollo Gateway.
 
-- Node.js 18+
-- Docker & Docker Compose
-- PostgreSQL
-- Redis
+### Services
 
-### Installation
+- `auth-service`: registration, login, JWT, roles (`ADMIN`, `OPERATOR`)
+- `vehicle-service`: vehicle management, simulated GPS positions, movement history
+- `traffic-service`: traffic zones, density measurement, congestion detection
+- `incident-service`: incident declaration and status management
+- `notification-service`: notifications and read tracking
+- `api-gateway`: single GraphQL entrypoint for all services
 
-1. Cloner le repository
+## Prerequisites
+
+- Docker Desktop
+- Docker Compose
+
+## Run With Docker
+
+From the project root:
 
 ```bash
-git clone <https://github.com/Aymen10XP/urban-traffic-management.git>
-cd urban-traffic-management
-npm i
+docker compose up -d --build
 ```
 
----
+This starts PostgreSQL, Redis, all five GraphQL services, and the Apollo Gateway.
 
-### **How to Start the Project**
+## Main GraphQL Endpoint
 
-You have **two options**:
+Use Apollo Sandbox, Postman, or ApiDog against:
 
-#### **Option 1: Docker (recommended — runs everything)**
-
-```
-docker-compose up -d        # or: npm run docker:up
-
-# for postgres and redis in case of the above command's error
-docker-compose up -d postgres redis
+```text
+http://localhost:4000/graphql
 ```
 
-This spins up Postgres, Redis, all 5 services, and the API gateway.
+The individual subgraph endpoints are available for debugging:
 
-#### **Option 2: Local dev (individual services)**
+- `http://localhost:3001/graphql`
+- `http://localhost:3002/graphql`
+- `http://localhost:3003/graphql`
+- `http://localhost:3004/graphql`
+- `http://localhost:3005/graphql`
 
+## Authentication
+
+Most business operations require a JWT.
+
+1. Run `register` or `login`
+2. Copy the returned token
+3. In Apollo Sandbox, open the `Headers` tab and send:
+
+```json
+{
+  "Authorization": "Bearer YOUR_JWT_TOKEN"
+}
 ```
-npm run dev:gateway         # API Gateway on :4000
-npm run dev:auth            # Auth Service on :3001
-npm run dev:vehicle         # Vehicle Service on :3002
-npm run dev:traffic         # Traffic Service on :3003
-npm run dev:incident        # Incident Service on :3004
-npm run dev:notification    # Notification Service on :3005
-npm run dev:all             # ALL of the above simultaneously
-```
 
-#### **In browser:**
+## Demo Flow
 
-```
-# Test locally:
-localhost:[PORT]/graphql
-```
+Use the ready-to-run scenarios in [APOLLO_SANDBOX_SCENARIOS.md](/D:/tekup/ing%204/sem2/web%20service/project/urban-traffic-management/APOLLO_SANDBOX_SCENARIOS.md).
 
- 
+Recommended order:
+
+1. Register or log in as `ADMIN`
+2. Create a vehicle
+3. Record two GPS positions
+4. Query the vehicle movement history
+5. Create a traffic zone
+6. Measure traffic density and verify congestion classification
+7. Create an incident and update its status
+8. Send a notification and mark it as read
+
+## Notes
+
+- PostgreSQL is the required relational database used by the services.
+- Redis is available in Docker but is not required for the mandatory assignment flow.
+- The gateway is the main endpoint to use during demos and testing.

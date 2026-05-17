@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TrafficService } from './traffic.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtAuthGuard } from '../jwt-auth.guard';
 import { TrafficResolver } from './traffic.resolver';
+import { TrafficService } from './traffic.service';
+import { TrafficZone } from './entities/traffic-zone.entity';
 
 @Module({
-  providers: [TrafficResolver, TrafficService],
+  imports: [TypeOrmModule.forFeature([TrafficZone])],
+  providers: [TrafficResolver, TrafficService, JwtAuthGuard],
 })
 export class TrafficModule {}

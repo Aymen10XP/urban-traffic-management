@@ -1,44 +1,52 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { NotificationService } from './notification.service';
-import { Notification } from './entities/notification.entity';
+import { UseGuards } from '@nestjs/common';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { JwtAuthGuard } from '../jwt-auth.guard';
 import { SendNotificationInput } from './dto/send-notification.input';
+import { UpdateNotificationInput } from './dto/update-notification.input';
+import { Notification } from './entities/notification.entity';
+import { NotificationService } from './notification.service';
 
 @Resolver(() => Notification)
+@UseGuards(JwtAuthGuard)
 export class NotificationResolver {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Mutation(() => Notification, {
-    description: 'Envoyer une nouvelle notification',
+    description: 'Send a new notification',
   })
-  sendNotification(
-    @Args('input') input: SendNotificationInput,
-  ): Notification {
+  sendNotification(@Args('input') input: SendNotificationInput) {
     return this.notificationService.send(input);
   }
 
   @Query(() => [Notification], {
     name: 'notifications',
-    description: 'Consulter toutes les notifications',
+    description: 'List all notifications',
   })
-  findAll(): Notification[] {
+  findAll() {
     return this.notificationService.findAll();
   }
 
   @Mutation(() => Notification, {
-    description: 'Marquer une notification comme lue',
+    description: 'Mark a notification as read',
   })
-  markAsRead(
-    @Args('id', { type: () => Int }) id: number,
-  ): Notification {
+  markAsRead(@Args('id', { type: () => Int }) id: number) {
     return this.notificationService.markAsRead(id);
   }
 
-  @Mutation(() => Boolean, {
-    description: 'Supprimer une notification',
+  @Mutation(() => Notification, {
+    description: 'Update a notification',
   })
-  removeNotification(
+  updateNotification(
     @Args('id', { type: () => Int }) id: number,
-  ): boolean {
+    @Args('input') input: UpdateNotificationInput,
+  ) {
+    return this.notificationService.update(id, input);
+  }
+
+  @Mutation(() => Boolean, {
+    description: 'Delete a notification',
+  })
+  removeNotification(@Args('id', { type: () => Int }) id: number) {
     return this.notificationService.remove(id);
   }
 }

@@ -1,4 +1,5 @@
-import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export enum IncidentType {
   ACCIDENT = 'ACCIDENT',
@@ -15,34 +16,53 @@ export enum IncidentStatus {
 
 registerEnumType(IncidentType, {
   name: 'IncidentType',
-  description: 'Nature de l’incident de trafic',
+  description: 'Type of traffic incident',
 });
 
 registerEnumType(IncidentStatus, {
   name: 'IncidentStatus',
-  description: 'Statut courant de l’incident',
+  description: 'Current incident status',
 });
 
 @ObjectType()
+@Entity('incidents')
 export class Incident {
   @Field(() => Int)
-  id: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @Field()
-  title: string;
+  @Column()
+  title!: string;
 
   @Field()
-  description: string;
+  @Column('text')
+  description!: string;
 
   @Field()
-  location: string;
+  @Column()
+  location!: string;
 
   @Field(() => IncidentType)
-  type: IncidentType;
+  @Column({
+    type: 'enum',
+    enum: IncidentType,
+  })
+  type!: IncidentType;
 
   @Field(() => IncidentStatus)
-  status: IncidentStatus;
+  @Column({
+    type: 'enum',
+    enum: IncidentStatus,
+    default: IncidentStatus.SIGNALE,
+  })
+  status!: IncidentStatus;
 
   @Field()
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

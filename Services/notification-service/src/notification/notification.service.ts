@@ -1,39 +1,71 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Notification, NotificationType } from './entities/notification.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { SendNotificationInput } from './dto/send-notification.input';
+import { UpdateNotificationInput } from './dto/update-notification.input';
+import { Notification } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationService {
-  private notifications: Notification[] = [];
-  private idCounter = 1;
+  constructor(
+    @InjectRepository(Notification)
+    private readonly notificationsRepository: Repository<Notification>,
+  ) {}
 
-  send(input: SendNotificationInput): Notification {
-    const notification: Notification = {
-      id: this.idCounter++,
+  async send(input: SendNotificationInput): Promise<Notification> {
+    const notification = this.notificationsRepository.create({
       ...input,
       isRead: false,
-      createdAt: new Date(),
-    };
-    this.notifications.push(notification);
-    return notification;
+    });
+
+    return this.notificationsRepository.save(notification);
   }
 
-  findAll(): Notification[] {
-    return this.notifications;
+  async findAll(): Promise<Notification[]> {
+    return this.notificationsRepository.find({
+      order: { createdAt: 'DESC', id: 'DESC' },
+    });
   }
 
-  markAsRead(id: number): Notification {
-    const notification = this.notifications.find((n) => n.id === id);
+  async markAsRead(id: number): Promise<Notification> {
+    const notification = await this.findById(id);
+    notification.isRead = true;
+    return this.notificationsRepository.save(notification);
+  }
+
+  async update(id: number, input: UpdateNotificationInput): Promise<Notification> {
+    const notification = await this.findById(id);
+
+    if (input.message !== undefined) {
+      notification.message = input.message;
+    }
+
+    if (input.type !== undefined) {
+      notification.type = input.type;
+    }
+
+    if (input.isRead !== undefined) {
+      notification.isRead = input.isRead;
+    }
+
+    return this.notificationsRepository.save(notification);
+  }
+
+  async remove(id: number): Promise<boolean> {
+    await this.findById(id);
+    await this.notificationsRepository.delete(id);
+    return true;
+  }
+
+  private async findById(id: number): Promise<Notification> {
+    const notification = await this.notificationsRepository.findOne({
+      where: { id },
+    });
+
     if (!notification) {
       throw new NotFoundException(`Notification with ID ${id} not found`);
     }
-    notification.isRead = true;
-    return notification;
-  }
 
-  remove(id: number): boolean {
-    const initialLength = this.notifications.length;
-    this.notifications = this.notifications.filter((n) => n.id !== id);
-    return this.notifications.length < initialLength;
+    return notification;
   }
 }

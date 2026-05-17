@@ -1,8 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { User, UserRole } from './entities/user.entity';
-import { RegisterInput, LoginInput, AuthPayload } from './dto/auth.input';
+import { RegisterInput, LoginInput, AuthPayload, UpdateUserInput } from './dto/auth.input';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
@@ -60,6 +60,60 @@ export class AuthService {
 
   async getAllUsers(): Promise<User[]> {
     return this.userRepository.find();
+  }
+
+  async updateUser(input: UpdateUserInput): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: input.id },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${input.id} not found`);
+    }
+
+    if (input.email || input.username) {
+      const conflictingUser = await this.userRepository.findOne({
+        where: [
+          ...(input.email ? [{ email: input.email, id: Not(input.id) }] : []),
+          ...(input.username ? [{ username: input.username, id: Not(input.id) }] : []),
+        ],
+      });
+
+      if (conflictingUser) {
+        throw new ConflictException('Another user already uses this email or username');
+      }
+    }
+
+    if (input.email !== undefined) {
+      user.email = input.email;
+    }
+
+    if (input.username !== undefined) {
+      user.username = input.username;
+    }
+
+    if (input.role !== undefined) {
+      user.role = input.role;
+    }
+
+    if (input.password !== undefined) {
+      user.password = await bcrypt.hash(input.password, 10);
+    }
+
+    return this.userRepository.save(user);
+  }
+
+  async removeUser(id: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    await this.userRepository.delete(id);
+    return true;
   }
 
   private generateToken(user: User): string {

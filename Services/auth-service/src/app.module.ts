@@ -18,7 +18,7 @@ import { JwtStrategy } from './jwt.strategy';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get('DATABASE_HOST', 'postgres'),
-        port: configService.get('DATABASE_PORT', 5432),
+        port: Number(configService.get('DATABASE_PORT', 5432)),
         username: configService.get('DATABASE_USER', 'admin'),
         password: configService.get('DATABASE_PASSWORD', 'admin123'),
         database: configService.get('DATABASE_NAME', 'traffic_management'),

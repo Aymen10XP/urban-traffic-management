@@ -1,4 +1,4 @@
-import { ApolloGateway, IntrospectAndCompose } from '@apollo/gateway';
+import { ApolloGateway, IntrospectAndCompose, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 
@@ -12,15 +12,30 @@ const gateway = new ApolloGateway({
       { name: 'notification', url: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3005/graphql' },
     ],
   }),
+  buildService({ url }) {
+    return new RemoteGraphQLDataSource({
+      url,
+      willSendRequest({ request, context }) {
+        if (context.authorization) {
+          request.http?.headers.set('authorization', context.authorization);
+        }
+      },
+    });
+  },
 });
 
-const server = new ApolloServer({ gateway });
+const server = new ApolloServer({
+  gateway,
+});
 
 async function startServer() {
   const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
-    context: async ({ req }) => ({ req }),
+    listen: { port: Number(process.env.PORT) || 4000, host: '0.0.0.0' },
+    context: async ({ req }) => ({
+      authorization: req.headers.authorization,
+    }),
   });
+
   console.log(`API Gateway ready at ${url}`);
 }
 

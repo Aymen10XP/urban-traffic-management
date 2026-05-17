@@ -1,56 +1,69 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { TrafficService } from './traffic.service';
-import { TrafficZone } from './entities/traffic-zone.entity';
+import { UseGuards } from '@nestjs/common';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { JwtAuthGuard } from '../jwt-auth.guard';
 import { CreateTrafficZoneInput } from './dto/create-traffic-zone.input';
+import { MeasureTrafficDensityInput } from './dto/measure-traffic-density.input';
 import { UpdateTrafficZoneInput } from './dto/update-traffic-zone.input';
+import { TrafficZone } from './entities/traffic-zone.entity';
+import { TrafficService } from './traffic.service';
 
 @Resolver(() => TrafficZone)
+@UseGuards(JwtAuthGuard)
 export class TrafficResolver {
-  constructor(private readonly trafficService: TrafficService) { }
+  constructor(private readonly trafficService: TrafficService) {}
 
   @Mutation(() => TrafficZone, {
-    description: 'Créer une nouvelle zone de circulation',
+    description: 'Create a new traffic zone',
   })
-  createTrafficZone(
-    @Args('input') input: CreateTrafficZoneInput,
-  ): TrafficZone {
+  createTrafficZone(@Args('input') input: CreateTrafficZoneInput) {
     return this.trafficService.create(input);
   }
 
   @Query(() => [TrafficZone], {
     name: 'trafficZones',
-    description: 'Afficher toutes les zones de trafic',
+    description: 'List all traffic zones',
   })
-  findAll(): TrafficZone[] {
+  findAll() {
     return this.trafficService.findAll();
   }
 
   @Query(() => TrafficZone, {
     name: 'trafficZone',
-    description: 'Afficher une zone de trafic par ID',
+    description: 'Get a traffic zone by ID',
   })
-  findOne(
-    @Args('id', { type: () => Int }) id: number,
-  ): TrafficZone {
+  findOne(@Args('id', { type: () => Int }) id: number) {
     return this.trafficService.findOne(id);
   }
 
+  @Query(() => [TrafficZone], {
+    name: 'congestedTrafficZones',
+    description: 'List zones currently classified as congested',
+  })
+  congestedTrafficZones() {
+    return this.trafficService.findCongestedZones();
+  }
+
   @Mutation(() => TrafficZone, {
-    description: 'Modifier une zone de trafic existante',
+    description: 'Update a traffic zone',
   })
   updateTrafficZone(
     @Args('id', { type: () => Int }) id: number,
     @Args('input') input: UpdateTrafficZoneInput,
-  ): TrafficZone {
+  ) {
     return this.trafficService.update(id, input);
   }
 
   @Mutation(() => TrafficZone, {
-    description: 'Supprimer une zone de trafic',
+    description: 'Measure and store the traffic density for a zone',
   })
-  removeTrafficZone(
-    @Args('id', { type: () => Int }) id: number,
-  ): TrafficZone {
+  measureTrafficDensity(@Args('input') input: MeasureTrafficDensityInput) {
+    return this.trafficService.measureDensity(input);
+  }
+
+  @Mutation(() => TrafficZone, {
+    description: 'Delete a traffic zone',
+  })
+  removeTrafficZone(@Args('id', { type: () => Int }) id: number) {
     return this.trafficService.remove(id);
   }
 }

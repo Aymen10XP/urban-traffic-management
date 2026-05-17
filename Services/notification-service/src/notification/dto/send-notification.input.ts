@@ -1,11 +1,15 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { NotificationType } from '../entities/notification.entity';
 
 @InputType()
 export class SendNotificationInput {
   @Field()
-  message: string;
+  @IsString()
+  @IsNotEmpty()
+  message!: string;
 
   @Field(() => NotificationType)
-  type: NotificationType;
+  @IsEnum(NotificationType)
+  type!: NotificationType;
 }

@@ -1,36 +1,53 @@
-import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export enum CongestionLevel {
-  FAIBLE = 'Faible',
-  MOYEN = 'Moyen',
-  ELEVE = 'Élevé',
+  FAIBLE = 'FAIBLE',
+  MOYEN = 'MOYEN',
+  ELEVE = 'ELEVE',
 }
 
 registerEnumType(CongestionLevel, {
   name: 'CongestionLevel',
-  description: 'Niveau de congestion de la zone de trafic',
+  description: 'Traffic congestion level for the zone',
 });
 
 @ObjectType()
+@Entity('traffic_zones')
 export class TrafficZone {
   @Field(() => Int)
-  id: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @Field()
-  name: string;
+  @Column({ unique: true })
+  name!: string;
 
-  @Field(() => Int, { description: 'Densité du trafic en pourcentage (0-100)' })
-  density: number;
+  @Field(() => Int, { description: 'Traffic density percentage between 0 and 100' })
+  @Column()
+  density!: number;
 
   @Field(() => CongestionLevel)
-  congestionLevel: CongestionLevel;
+  @Column({
+    type: 'enum',
+    enum: CongestionLevel,
+  })
+  congestionLevel!: CongestionLevel;
 
   @Field()
-  location: string;
+  @Column()
+  location!: string;
+
+  @Field(() => Boolean)
+  get isCongested(): boolean {
+    return this.congestionLevel === CongestionLevel.ELEVE;
+  }
 
   @Field()
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
 
   @Field()
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }
