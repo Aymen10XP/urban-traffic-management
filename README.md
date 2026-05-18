@@ -78,3 +78,40 @@ Recommended order:
 - PostgreSQL is the required relational database used by the services.
 - Redis is available in Docker but is not required for the mandatory assignment flow.
 - The gateway is the main endpoint to use during demos and testing.
+
+## CI/CD Deployment
+
+The repository includes a GitHub Actions workflow for backend CI/CD at `.github/workflows/backend-cicd.yml`.
+
+### What runs on pull requests
+
+- unit tests for each service and the gateway
+- TypeScript builds for each service and the gateway
+
+### What runs on pushes to `main`
+
+- unit tests
+- application builds
+- Docker image build and publish to GHCR
+- SSH deployment to a Docker host using `.deploy/docker-compose.prod.yml`
+
+### Required GitHub secrets
+
+- `DEPLOY_HOST`
+- `DEPLOY_USER`
+- `DEPLOY_SSH_KEY`
+- `DEPLOY_PORT`
+- `DEPLOY_PATH`
+- `GHCR_USERNAME`
+- `GHCR_TOKEN`
+
+### Server preparation
+
+The deployment server should already have:
+
+- Docker installed
+- Docker Compose installed
+- a deployment directory matching `DEPLOY_PATH`
+- a runtime env file at `.deploy/.env`
+
+Use `.deploy/.env.example` as the starting template for the server-side environment file.

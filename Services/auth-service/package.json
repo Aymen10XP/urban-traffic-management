@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "nest build",
+    "test": "node --import tsx --test test/smoke.test.js",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main"
@@ -32,6 +33,7 @@
     "@nestjs/cli": "^10.0.0",
     "@types/bcrypt": "^5.0.0",
     "@types/passport-jwt": "^3.0.9",
+    "tsx": "^4.20.6",
     "typescript": "^5.0.0"
   }
 }
