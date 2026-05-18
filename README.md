@@ -57,11 +57,6 @@ Most business operations require a JWT.
   "Authorization": "Bearer YOUR_JWT_TOKEN"
 }
 ```
-
-## Demo Flow
-
-Use the ready-to-run scenarios in [APOLLO_SANDBOX_SCENARIOS.md](/D:/tekup/ing%204/sem2/web%20service/project/urban-traffic-management/APOLLO_SANDBOX_SCENARIOS.md).
-
 Recommended order:
 
 1. Register or log in as `ADMIN`
@@ -76,5 +71,5 @@ Recommended order:
 ## Notes
 
 - PostgreSQL is the required relational database used by the services.
-- Redis is available in Docker but is not required for the mandatory assignment flow.
+- Redis is available in Docker but is not required for the mandatory flow.
 - The gateway is the main endpoint to use during demos and testing.
